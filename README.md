@@ -8,12 +8,42 @@ A data adapter that uses the [XMLHttpRequest](https://xhr.spec.whatwg.org/) obje
 npm install @paychex/adapter-xhr
 ```
 
+## Importing
+
+### esm
+
+```js
+import { xhr } from '@paychex/adapter-xhr';
+```
+
+### cjs
+
+```js
+const { xhr } = require('@paychex/adapter-xhr');
+```
+
+### amd
+
+```js
+define(['@paychex/adapter-xhr'], function({ xhr }) { ... });
+```
+
+```js
+require(['@paychex/adapter-xhr'], function({ xhr }) { ... });
+```
+
+### iife
+
+```js
+const { xhr } = window['@paychex/adapter-xhr'];
+```
+
 ## Usage
 
 ```js
-import xhrAdapter from '@paychex/adapter-xhr/index.js';
-import { createDataLayer, createProxy } from '@paychex/core/data/index.js';
+import { data } from '@paychex/core';
+import { xhr } from '@paychex/adapter-xhr';
 
-const proxy = createProxy();
-const { createRequest, fetch, setAdapter } = createDataLayer(proxy, xhrAdapter);
+const proxy = data.createProxy();
+const { createRequest, fetch, setAdapter } = data.createDataLayer(proxy, xhr);
 ```

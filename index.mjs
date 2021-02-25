@@ -1,10 +1,17 @@
-import get from 'lodash/get.js';
-import set from 'lodash/set.js';
-import filter from 'lodash/filter.js';
-import flatten from 'lodash/flatten.js';
-import attempt from 'lodash/attempt.js';
-import isEmpty from 'lodash/isEmpty.js';
-import isString from 'lodash/isString.js';
+import {
+    get,
+    set,
+    filter,
+    flatten,
+    attempt,
+    isEmpty,
+    isString,
+} from 'lodash-es';
+
+import { data as Types } from '@paychex/core/dist/esm/types.mjs';
+
+class Request extends Types.Request {}
+class Response extends Types.Response {}
 
 const splitter = /[\r\n]+/;
 const XSSI = /^\)]\}',?\n/;
@@ -81,17 +88,15 @@ function setRequestHeader([name, value]) {
 /**
  * A data adapter that uses the [XMLHttpRequest](https://xhr.spec.whatwg.org/) object to convert a Request into a Response. Can be passed to the [@paychex/core](https://github.com/paychex/core) createDataLayer factory method to enable data operations on NodeJS.
  *
- * @static
- * @function xhr
+ * @async
+ * @function
  * @param {Request} request The Request to convert into a Response.
+ * @returns {Promise.<Response>} A Response for the given Request.
  * @example
- * import xhrAdapter from '@paychex/adapter-xhr/index.js';
- * import { createDataLayer, createProxy } from '@paychex/core/data/index.js';
- *
- * const proxy = createProxy();
- * const { createRequest, fetch, setAdapter } = createDataLayer(proxy, xhrAdapter);
+ * const proxy = data.createProxy();
+ * const { createRequest, fetch, setAdapter } = data.createDataLayer(proxy, xhr);
  */
-export default function xhr(request) {
+export function xhr(request) {
 
     return new Promise(function XHRPromise(resolve) {
 

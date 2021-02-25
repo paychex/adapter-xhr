@@ -1,8 +1,8 @@
 import expect from 'expect';
-import set from 'lodash/set.js';
+import { set } from 'lodash-es';
+import { spy } from '@paychex/core/test/utils.mjs';
 
-import { spy } from '@paychex/core/test/utils.js';
-import adapter from '../index.js';
+import { xhr as adapter } from '../index.mjs';
 
 describe('xhr adapter', () => {
 
