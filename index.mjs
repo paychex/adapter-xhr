@@ -8,10 +8,7 @@ import {
     isString,
 } from 'lodash-es';
 
-import { data as Types } from '@paychex/core/dist/esm/types.mjs';
-
-class Request extends Types.Request {}
-class Response extends Types.Response {}
+import '@paychex/core/types/data.mjs';
 
 const splitter = /[\r\n]+/;
 const XSSI = /^\)]\}',?\n/;
