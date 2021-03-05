@@ -35,6 +35,9 @@ module.exports = [
             sourcemap: true,
             paths: {
                 'lodash-es': 'lodash'
+            },
+            globals: {
+                'lodash-es': 'lodash'
             }
         },
     },
@@ -73,6 +76,9 @@ module.exports = [
             exports: "named",
             sourcemap: true,
             paths: {
+                'lodash-es': 'lodash'
+            },
+            globals: {
                 'lodash-es': 'lodash'
             }
         },
