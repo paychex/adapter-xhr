@@ -37,7 +37,7 @@ module.exports = [
                 'lodash-es': 'lodash'
             },
             globals: {
-                'lodash-es': 'lodash'
+                'lodash-es': '_'
             }
         },
     },
@@ -78,9 +78,6 @@ module.exports = [
             paths: {
                 'lodash-es': 'lodash'
             },
-            globals: {
-                'lodash-es': 'lodash'
-            }
         },
     },
 ];
