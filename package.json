@@ -8,6 +8,14 @@
         "dist",
         "docs"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/paychex/adapter-xhr.git"
+    },
+    "bugs": {
+        "url": "https://github.com/paychex/adapter-xhr/issues"
+    },
+    "homepage": "https://paychex.github.io/adapter-xhr/",
     "scripts": {
         "test": "mocha --recursive",
         "coverage": "c8 --reporter=html mocha --recursive",
