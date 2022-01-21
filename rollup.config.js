@@ -33,7 +33,7 @@ module.exports = [
             esModule: false,
             exports: "named",
             sourcemap: true,
-            banner: `/* ${pkg.name} v${pkg.version} */`,
+            banner: `/*! ${pkg.name} v${pkg.version} */`,
             paths: {
                 'lodash-es': 'lodash'
             },
@@ -58,7 +58,7 @@ module.exports = [
             format: "esm",
             exports: "named",
             sourcemap: true,
-            banner: `/* ${pkg.name} v${pkg.version} */`,
+            banner: `/*! ${pkg.name} v${pkg.version} */`,
         },
     },
     // CJS
@@ -77,7 +77,7 @@ module.exports = [
             format: "cjs",
             exports: "named",
             sourcemap: true,
-            banner: `/* ${pkg.name} v${pkg.version} */`,
+            banner: `/*! ${pkg.name} v${pkg.version} */`,
             paths: {
                 'lodash-es': 'lodash'
             },
