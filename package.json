@@ -1,6 +1,6 @@
 {
     "name": "@paychex/adapter-xhr",
-    "version": "2.1.12",
+    "version": "2.1.13",
     "description": "A data adapter that uses the XMLHttpRequest object in web browsers to convert a Request into a Response.",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
