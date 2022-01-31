@@ -1,3 +1,24 @@
+/**
+ * Provides the top-level XHR Adapter that can be used in `@paychex/core` data pipelines.
+ *
+ * ```js
+ * // esm
+ * import { xhr } from '@paychex/adapter-xhr';
+ *
+ * // cjs
+ * const { xhr } = require('@paychex/adapter-xhr');
+ *
+ * // amd
+ * define(['@paychex/adapter-xhr'], function({ xhr }) { ... });
+ * require(['@paychex/adapter-xhr'], function({ xhr }) { ... });
+ *
+ * // iife
+ * const { xhr } = window['@paychex/adapter-xhr'];
+ * ```
+ *
+ * @module main
+ */
+
 import {
     get,
     set,
@@ -6,24 +27,26 @@ import {
     attempt,
     isEmpty,
     isString,
-} from 'lodash-es';
+} from 'lodash';
 
-import '@paychex/core/types/data.mjs';
+import type { HeadersMap, Request, Response, MetaData, Message } from '@paychex/core/data';
+
+export type { Request, Response, MetaData, HeadersMap, Message };
 
 const splitter = /[\r\n]+/;
 const XSSI = /^\)]\}',?\n/;
-const empty = Object.create(null);
+const empty: {} = Object.create(null);
 
-function toStringArray(value) {
+function toStringArray(value: string|string[]): string {
     return filter(flatten([value]), isString).join(', ');
 }
 
-function safeParseJSON(response) {
+function safeParseJSON(response: Response): void {
     const json = String(response.data);
     response.data = JSON.parse(json.replace(XSSI, ''));
 }
 
-function asHeaderMap(map, header) {
+function asHeaderMap(map: HeadersMap, header: string): HeadersMap {
     const parts = header.split(':');
     const key = String(parts.shift());
     const value = String(parts.join(':'));
@@ -31,33 +54,33 @@ function asHeaderMap(map, header) {
     return map;
 }
 
-function setResponseType(request, http) {
+function setResponseType(request: Request, http: XMLHttpRequest): void {
     http.responseType = request.responseType;
     if (request.responseType === 'json')
         http.responseType = 'text';
 }
 
-function setStatus(response, http) {
+function setStatus(response: Response, http: XMLHttpRequest): void {
     response.status = http.status;
     response.statusText = http.statusText;
 }
 
-function setHeaders(response, http) {
+function setHeaders(response: Response, http: XMLHttpRequest): void {
     const headers = http.getAllResponseHeaders() || '';
     response.meta.headers = headers.split(splitter)
         .filter(Boolean)
         .reduce(asHeaderMap, {});
 }
 
-function setResponse(response, http) {
+function setResponse(response: Response, http: XMLHttpRequest): void {
     response.data = http.response;
     if (get(response, 'meta.headers.content-type', '').includes('json'))
         attempt(safeParseJSON, response);
 }
 
-function setCached(response, sendDate) {
+function setCached(response: Response, sendDate: Date): void {
     const date = new Date(get(response, 'meta.headers.date'));
-    if (!isNaN(date)) { // determines if Date is valid
+    if (!isNaN(Number(date))) { // determines if Date is valid
         // Date header is only accurate to the nearest second
         // so we round both down to the second before comparing
         const responseTime = Math.floor(date.getTime() / 1000);
@@ -66,41 +89,37 @@ function setCached(response, sendDate) {
     }
 }
 
-function toKeyValuePair(name) {
+function toKeyValuePair(name: string): [string, string] {
     return [name, toStringArray(this[name])];
 }
 
-function hasHeaderValue([, values]) {
+function hasHeaderValue([, values]: [string, string|string[]]): boolean {
     return !isEmpty(values);
 }
 
-function setRequestHeader([name, value]) {
+function setRequestHeader([name, value]: [string, string]): void {
     this.setRequestHeader(name, value);
 }
 
 /**
- * @module index
- */
-
-/**
  * A data adapter that uses the [XMLHttpRequest](https://xhr.spec.whatwg.org/) object to convert a Request into a Response. Can be passed to the [@paychex/core](https://github.com/paychex/core) createDataLayer factory method to enable data operations on NodeJS.
  *
- * @async
- * @function
- * @param {Request} request The Request to convert into a Response.
- * @returns {Promise.<Response>} A Response for the given Request.
+ * @param request The Request to convert into a Response.
+ * @returns A Response for the given Request.
  * @example
+ * ```js
  * const proxy = data.createProxy();
  * const { createRequest, fetch, setAdapter } = data.createDataLayer(proxy, xhr);
+ * ```
  */
-export function xhr(request) {
+export function xhr(request: Request): Promise<Response> {
 
     return new Promise(function XHRPromise(resolve) {
 
         const sendDate = new Date();
         const http = new XMLHttpRequest();
 
-        const response = {
+        const response: Response = {
             meta: {
                 headers: {},
                 messages: [],
@@ -154,7 +173,7 @@ export function xhr(request) {
 
         setResponseType(request, http);
 
-        Object.keys(get(request, 'headers', empty))
+        Object.keys(get(request, 'headers', empty) as HeadersMap)
             .map(toKeyValuePair, request.headers)
             .filter(hasHeaderValue)
             .forEach(setRequestHeader, http);

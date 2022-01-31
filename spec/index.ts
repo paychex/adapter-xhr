@@ -1,12 +1,15 @@
-import expect from 'expect';
-import { set } from 'lodash-es';
-import { spy } from '@paychex/core/test/utils.mjs';
+import * as expect from 'expect';
+import { set } from 'lodash';
+import { Spy, spy } from '@paychex/core/test';
 
-import { xhr as adapter } from '../index.mjs';
+import { xhr as adapter } from '../index';
 
 describe('xhr adapter', () => {
 
-    let xhr, http, request, headers;
+    let xhr: Spy,
+        http: any,
+        request: Record<string, any>,
+        headers: string;
 
     beforeEach(() => {
         request = { method: 'GET', url: 'test.com', body: null };
@@ -112,7 +115,7 @@ describe('xhr adapter', () => {
         const past = new Date(Date.now() - 1000);
         http.status = 200;
         http.response = '';
-        http.getAllResponseHeaders.returns(`date: ${past.toGMTString()}`);
+        http.getAllResponseHeaders.returns(`date: ${past.toUTCString()}`);
         adapter(request).then(response => {
             expect(response.meta.cached).toBe(true);
             done();
