@@ -29,7 +29,7 @@ import {
     isString,
 } from 'lodash';
 
-import type { HeadersMap, Request, Response, MetaData, Message } from '@paychex/core/data';
+import type { HeadersMap, Request, Response, MetaData, Message } from '@paychex/core/types/data';
 
 export type { Request, Response, MetaData, HeadersMap, Message };
 
