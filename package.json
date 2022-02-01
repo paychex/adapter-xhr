@@ -5,6 +5,7 @@
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.mjs",
     "browser": "dist/umd/paychex.adapter-xhr.js",
+    "types": "types/index.d.ts",
     "files": [
         "dist",
         "docs",
@@ -19,14 +20,17 @@
     },
     "homepage": "https://paychex.github.io/adapter-xhr/",
     "scripts": {
-        "test": "mocha",
-        "coverage": "c8 --clean=true --exclude=spec --reporter=html mocha",
-        "docs": "typedoc",
         "build": "rollup -c",
-        "postbuild": "tsc --declaration --emitDeclarationOnly --declarationDir types",
+        "c8": "c8 --clean=true --exclude=spec --reporter=html",
         "clean": "rimraf dist docs coverage types",
-        "preversion": "npm run clean && npm run docs && npm run build",
-        "prepublishOnly": "c8 --clean=true --exclude=spec --reporter=html --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha --recursive"
+        "coverage": "npm run c8 -- mocha",
+        "docs": "typedoc",
+        "preversion": "npm run clean && npm run verify",
+        "prepublishOnly": "npm run version",
+        "test": "mocha",
+        "types": "tsc --declaration --emitDeclarationOnly --declarationDir types",
+        "verify": "npm run c8 -- --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
+        "version": "npm run docs && npm run build && npm run types && git add -A"
     },
     "keywords": [
         "paychex",
@@ -55,7 +59,7 @@
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.2.0",
         "@rollup/plugin-typescript": "^8.3.0",
-        "@types/lodash-es": "^4.17.5",
+        "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.1.0",
         "c8": "^7.3.5",
         "expect": "^26.0.1",
