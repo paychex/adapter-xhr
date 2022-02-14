@@ -15,26 +15,12 @@ const output = {
     esModule: false,
     exports: "named",
     sourcemap: true,
-    banner: `/*! ${pkg.name} v${pkg.version} */`,
-    globals: {
-        'lodash': '_'
-    }
-};
-
-const output = {
-    format: "umd",
-    name: pkg.name,
-    esModule: false,
-    exports: "named",
-    sourcemap: true,
     sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
         return `${pkg.name}/${path.relative(path.resolve('.'), path.resolve(path.dirname(sourcemapPath), relativeSourcePath))}`;
     },
-    paths: {
-        'lodash-es': 'lodash'
-    },
+    banner: `/*! ${pkg.name} v${pkg.version} */`,
     globals: {
-        'lodash-es': '_'
+        'lodash': '_'
     }
 };
 
