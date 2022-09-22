@@ -27,6 +27,9 @@ import {
     attempt,
     isEmpty,
     isString,
+    isObject,
+    isUndefined,
+    overSome,
 } from 'lodash';
 
 import type { HeadersMap, Request, Response, MetaData, Message } from '@paychex/core/types/data';
@@ -36,6 +39,7 @@ export type { Request, Response, MetaData, HeadersMap, Message };
 const splitter = /[\r\n]+/;
 const XSSI = /^\)]\}',?\n/;
 const empty: {} = Object.create(null);
+const toString = Object.prototype.toString;
 
 function toStringArray(value: string|string[]): string {
     return filter(flatten([value]), isString).join(', ');
@@ -99,6 +103,29 @@ function hasHeaderValue([, values]: [string, string|string[]]): boolean {
 
 function setRequestHeader([name, value]: [string, string]): void {
     this.setRequestHeader(name, value);
+}
+
+function isFile(object: any) {
+    return toString.call(object) === '[object File]';
+}
+
+function isBlob(object: any) {
+    return toString.call(object) === '[object Blob]';
+}
+
+function isFormData(object: any) {
+    return toString.call(object) === '[object FormData]';
+}
+
+function isByteArray(object: any) {
+    return toString.call(object) === '[object Uint8Array]';
+}
+
+const isKnownType = overSome(isByteArray, isFile, isBlob, isFormData);
+
+function getPayload(body: any): any {
+    const shouldStringify = isObject(body) && !isKnownType(body);
+    return shouldStringify ? JSON.stringify(body) : isUndefined(body) ? null : body;
 }
 
 /**
@@ -178,7 +205,7 @@ export function xhr(request: Request): Promise<Response> {
             .filter(hasHeaderValue)
             .forEach(setRequestHeader, http);
 
-        http.send(request.body);
+        http.send(getPayload(request.body));
 
     });
 

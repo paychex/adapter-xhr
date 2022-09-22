@@ -69,6 +69,18 @@ describe('xhr adapter', () => {
         expect(http.setRequestHeader.callCount).toBe(1);
     });
 
+    it('sends null instead of undefined', () => {
+        request.body = undefined;
+        adapter(request);
+        expect(http.send.args[0]).toBe(null);
+    });
+
+    it('serializes objects as JSON', () => {
+        request.body = { key: 'value' };
+        adapter(request);
+        expect(http.send.args[0]).toBe('{"key":"value"}');
+    });
+
     it('handles null response headers', (done) => {
         http.getAllResponseHeaders.returns(null);
         adapter(request).then(response => {
