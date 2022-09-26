@@ -105,6 +105,10 @@ function setRequestHeader([name, value]: [string, string]): void {
     this.setRequestHeader(name, value);
 }
 
+function proto(object: any) {
+    return Object.getPrototypeOf(object);
+}
+
 function isFile(object: any) {
     return toString.call(object) === '[object File]';
 }
@@ -117,15 +121,38 @@ function isFormData(object: any) {
     return toString.call(object) === '[object FormData]';
 }
 
-function isByteArray(object: any) {
-    return toString.call(object) === '[object Uint8Array]';
+function isDataView(object: any) {
+    return toString.call(object) === '[object DataView]';
 }
 
-const isKnownType = overSome(isByteArray, isFile, isBlob, isFormData);
+function isArrayBuffer(object: any) {
+    return toString.call(object) === '[object ArrayBuffer]';
+}
+
+function isUrlSearchParams(object: any) {
+    return toString.call(object) === '[object URLSearchParams]';
+}
+
+function isTypedArray(object: any) {
+    return get(proto(proto(object)), 'constructor.name') === 'TypedArray';
+}
+
+// these types can be processed by
+// XmlHttpRequest.send without serialization
+const isPassThroughType = overSome(
+    isTypedArray,
+    isFile,
+    isBlob,
+    isFormData,
+    isUrlSearchParams,
+    isArrayBuffer,
+    isDataView,
+);
 
 function getPayload(body: any): any {
-    const shouldStringify = isObject(body) && !isKnownType(body);
-    return shouldStringify ? JSON.stringify(body) : isUndefined(body) ? null : body;
+    const payload = isUndefined(body) ? null : body;
+    const shouldStringify = isObject(body) && !isPassThroughType(body);
+    return shouldStringify ? JSON.stringify(body) : payload;
 }
 
 /**

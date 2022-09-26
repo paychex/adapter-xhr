@@ -81,6 +81,23 @@ describe('xhr adapter', () => {
         expect(http.send.args[0]).toBe('{"key":"value"}');
     });
 
+    [
+        ['typed array', new Uint8Array()],
+        ['blob', new Blob([])],
+        ['form data', new FormData()],
+        ['url search params', new URLSearchParams({})],
+        ['array buffer', new ArrayBuffer(0)],
+        ['data view', new DataView(new ArrayBuffer(0))],
+    ].forEach(([type, value]) => {
+
+        it(`passes through ${type} unserialized`, () => {
+            request.body = value;
+            adapter(request);
+            expect(http.send.args[0]).toBe(value);
+        });
+
+    });
+
     it('handles null response headers', (done) => {
         http.getAllResponseHeaders.returns(null);
         adapter(request).then(response => {
